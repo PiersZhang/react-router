@@ -7,7 +7,7 @@
     "author": "",
     "main": ".babelrc.js",
     "scripts": {
-        "dev": "webpack-dev-server --config ./src/webpack.config.js --open -w"
+        "start": "webpack-dev-server --config ./src/webpack.config.js --open -w"
     },
     "devDependencies": {
         "@babel/core": "^7.12.10",

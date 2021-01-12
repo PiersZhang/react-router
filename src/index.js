@@ -1,13 +1,13 @@
 /*
  * @Author: Piers.Zhang
  * @Date: 2021-01-03 12:39:53
- * @LastEditTime: 2021-01-03 15:57:41
+ * @LastEditTime: 2021-01-05 18:05:12
  * @LastEditors: Do not edit
  */
 import React from 'react';
 import ReactDom from 'react-dom';
-import { BrowserRouter, Route, Link } from 'react-router-dom';
-// import { BrowserRouter, Route, Link } from './browserRouter';
+// import { BrowserRouter, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Route, Link } from './browserRouter';
 
 function App() {
     return (

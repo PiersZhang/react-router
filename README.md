@@ -1,13 +1,14 @@
 <!--
  * @Author: Piers.Zhang
  * @Date: 2021-01-03 13:10:32
- * @LastEditTime: 2021-01-04 13:24:41
+ * @LastEditTime: 2021-01-05 17:57:39
  * @LastEditors: Do not edit
 -->
 ### learning react-router and balabala width me 
 ### 启动
-`npm i `
-`npm run dev `
+`npm i `、`npm run dev `
+### react-router如何使用
+[React Router 使用教程](http://www.ruanyifeng.com/blog/2016/05/react_router.html)
 
 ### 原生js实现hashRouter
 原生js实现hashRouter主要是监听它的hashchange事件的变化，然后拿到对应的location.hash更新对应的视图
@@ -79,7 +80,7 @@
     onLoad();
 ```
 
-### react-router与react-router-dom
+### react-router与react-router-dom区别
 [两者区别](https://github.com/mrdulin/blog/issues/42)
 react-router: 实现了路由的核心功能
 react-router-dom: 基于react-router，加入了在浏览器运行环境下的一些功能，例如：Link组件，会渲染一个a标签，Link组件源码a标签行; BrowserRouter和HashRouter 组件，前者使用pushState和popState事件构建路由，后者使用window.location.hash和hashchange事件构建路由。
