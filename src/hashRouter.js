@@ -1,7 +1,7 @@
 /*
  * @Author: Piers.Zhang
  * @Date: 2021-01-03 15:58:14
- * @LastEditTime: 2021-01-03 15:58:53
+ * @LastEditTime: 2021-01-12 19:29:35
  * @LastEditors: Do not edit
  */
 import React from 'react'
@@ -15,34 +15,27 @@ export class HashRouter extends React.Component {
             currentPath: this.getCurrentPath.bind(this)(window.location.href)
         }
     }
-
     componentDidMount() {
         window.addEventListener('hashchange', this.onChangeView.bind(this))
     }
-
     componentWillUnmount() {
         window.removeEventListener('hashchange')
     }
-
     onChangeView(e) {
         let currentPath = this.getCurrentPath.bind(this)(window.location.href)
         this.setState({ currentPath })
     }
-
     getCurrentPath(url) {
         let hashRoute = url.split('#')
         return hashRoute[1]
     }
-
     render() {
         return (
             <Provider value={{ currentPath: this.state.currentPath }}>
                 <div>
                     {
                         React.Children.map(this.props.children, function (child) {
-
                             return child
-
                         })
                     }
                 </div>
@@ -55,7 +48,6 @@ export class Route extends React.Component {
     constructor(props) {
         super(props)
     }
-
     render() {
         let { path, render } = this.props
         return (
@@ -72,12 +64,10 @@ export class Route extends React.Component {
         )
     }
 }
-
 export class Link extends React.Component {
     constructor(props) {
         super(props)
     }
-
     render() {
         let { to, ...props } = this.props
         return <a href={'#' + to} {...props} />

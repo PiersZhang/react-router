@@ -1,12 +1,12 @@
 <!--
  * @Author: Piers.Zhang
  * @Date: 2021-01-03 13:10:32
- * @LastEditTime: 2021-01-05 17:57:39
+ * @LastEditTime: 2021-01-12 19:17:56
  * @LastEditors: Do not edit
 -->
 ### learning react-router and balabala width me 
 ### 启动
-`npm i `、`npm run dev `
+`npm i `、`npm start `
 ### react-router如何使用
 [React Router 使用教程](http://www.ruanyifeng.com/blog/2016/05/react_router.html)
 
@@ -109,3 +109,169 @@ react-router-dom: 基于react-router，加入了在浏览器运行环境下的�
 ```
 
 ### BrowserRouter实现
+BrowserRouter组件主要做的是将当前的路径往下传，并监听popstate事件
+[组件间传值的六种方法](https://juejin.cn/post/6844903972415750157)
+```javascript
+// src/browserRouter.js
+import React from 'react';
+const { Consumer, Provider } = React.createContext()
+export class BrowserRouter extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            currentPath: this.getParams.bind(this)(window.location.pathname)
+        }
+    }
+
+    onChangeView() {
+        const currentPath = this.getParams.bind(this)(window.location.pathname)
+        this.setState({ currentPath });
+    };
+
+    getParams(url) {
+        return url
+    }
+
+    componentDidMount() {
+        window.addEventListener("popstate", this.onChangeView.bind(this));
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("popstate", this.onChangeView.bind(this));
+    }
+
+    render() {
+        return (
+            <Provider value={{ currentPath: this.state.currentPath, onChangeView: this.onChangeView.bind(this) }}>
+                 <div>
+                    {
+                        React.Children.map(this.props.children, function (child) {
+                            return child
+                        })
+                    }
+                </div>
+            </Provider>
+        );
+    }
+}
+```
+Router组件主要做的是通过BrowserRouter传过来的当前值，与Route通过props传进来的path对比，然后决定是否执行props传进来的render函数
+```javascript
+// src/browserRouter.js
+export class Route extends React.Component {
+    constructor(props) {
+        super(props)
+    }
+    render() {
+        let { path, render } = this.props
+        return (
+            <Consumer>
+                {({ currentPath }) => currentPath === path && render()}
+            </Consumer>
+        )
+    }
+}
+
+
+```
+Link组件主要做的是，拿到prop,传进来的to,通过PushState()改变路由状态，然后拿到BrowserRouter传过来的onChangeView手动刷新视图
+```javascript
+// src/browserRouter.js
+export class Link extends React.Component {
+    constructor(props){
+        super(props)
+    }
+
+    render() {
+        let { to, ...props } = this.props
+        return (
+            <Consumer>
+                {({ onChangeView }) => (
+                    <a
+                        {...props}
+                        onClick={e => {
+                            e.preventDefault();
+                            window.history.pushState(null, "", to);
+                            onChangeView();
+                        }}
+                    />
+                )}
+            </Consumer>
+        )
+    }
+}
+```
+
+### HashRouter实现
+实现方式与BrowserRouter大同小异
+```javascript
+import React from 'react'
+let { Provider, Consumer } = React.createContext()
+export class HashRouter extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            currentPath: this.getCurrentPath.bind(this)(window.location.href)
+        }
+    }
+    componentDidMount() {
+        window.addEventListener('hashchange', this.onChangeView.bind(this))
+    }
+    componentWillUnmount() {
+        window.removeEventListener('hashchange')
+    }
+    onChangeView(e) {
+        let currentPath = this.getCurrentPath.bind(this)(window.location.href)
+        this.setState({ currentPath })
+    }
+    getCurrentPath(url) {
+        let hashRoute = url.split('#')
+        return hashRoute[1]
+    }
+    render() {
+        return (
+            <Provider value={{ currentPath: this.state.currentPath }}>
+                <div>
+                    {
+                        React.Children.map(this.props.children, function (child) {
+                            return child
+                        })
+                    }
+                </div>
+            </Provider>
+
+        )
+    }
+}
+
+export class Route extends React.Component {
+    constructor(props) {
+        super(props)
+    }
+    render() {
+        let { path, render } = this.props
+        return (
+            <Consumer>
+                {
+                    (value) => {
+                        console.log(value)
+                        return (
+                            value.currentPath === path && render()
+                        )
+                    }
+                }
+            </Consumer>
+        )
+    }
+}
+
+export class Link extends React.Component {
+    constructor(props) {
+        super(props)
+    }
+    render() {
+        let { to, ...props } = this.props
+        return <a href={'#' + to} {...props} />
+    }
+}
+```
